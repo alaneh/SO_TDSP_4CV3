@@ -1,0 +1,122 @@
+::Su tarea será agregar la diferencia (B-A) y el producto cartesiano tanto para A como B. jeje saludos
+
+@echo off
+setlocal EnableDelayedExpansion
+
+:input
+cls
+echo.
+echo Ingrese los conjuntos (separados por espacios):
+set /p set1="Conjunto 1: "
+set /p set2="Conjunto 2: "
+set /p choice="Conjunto Universo (S): "
+if /i "%choice%"=="s" (
+    set /p set3="Conjunto 3: "
+    set /a setCount=3
+) else (
+    set /a setCount=2
+)
+if %setCount% lss 3 (
+    set "set3="
+)
+
+echo.
+echo Operaciones disponibles:
+echo 1. Union
+echo 2. Interseccion
+echo 3. Diferencia (A - B)
+echo 4. Producto cartesiano
+echo 5. Complemento
+echo.
+set /p operation="Seleccione la operacion (1-5): "
+
+if %operation%==1 goto union
+if %operation%==2 goto interseccion
+if %operation%==3 goto diferencia
+if %operation%==4 goto producto_cartesiano
+if %operation%==5 goto complemento
+
+goto end
+
+:union
+set "result="
+for %%a in (%set1%) do (
+    if "!result!" == "" (
+        set "result=%%a"
+    ) else (
+        set "result=!result! %%a"
+    )
+)
+for %%b in (%set2%) do (
+    echo !result! | find "%%b" >nul || set "result=!result! %%b"
+)
+if defined set3 (
+    for %%c in (%set3%) do (
+        echo !result! | find "%%c" >nul || set "result=!result! %%c"
+    )
+)
+echo Union: !result!
+goto end
+
+:interseccion
+set "result="
+for %%a in (%set1%) do (
+    echo %set2% | find "%%a" >nul && (
+        if defined set3 (
+            echo %set3% | find "%%a" >nul && (
+                if "!result!" == "" (
+                    set "result=%%a"
+                ) else (
+                    set "result=!result! %%a"
+                )
+            )
+        ) else (
+            if "!result!" == "" (
+                set "result=%%a"
+            ) else (
+                set "result=!result! %%a"
+            )
+        )
+    )
+)
+echo Interseccion: !result!
+goto end
+
+:diferencia
+set "result="
+for %%a in (%set1%) do (
+    echo %set2% | find "%%a" >nul || (
+        if "!result!" == "" (
+            set "result=%%a"
+        ) else (
+            set "result=!result! %%a"
+        )
+    )
+)
+echo Diferencia: !result!
+goto end
+
+
+:producto_cartesiano
+set "result="
+:: Desarrollen su codigo aqui
+echo Producto Cartesiano: !result!
+goto end
+
+:complemento
+set /p universe="Ingrese el conjunto universo (separado por espacios): "
+set "result="
+for %%a in (%universe%) do (
+    echo %set1% %set2% | find "%%a" >nul || (
+        if "!result!" == "" (
+            set "result=%%a"
+        ) else (
+            set "result=!result! %%a"
+        )
+    )
+)
+echo Complemento: !result!
+goto end
+
+:end
+pause
