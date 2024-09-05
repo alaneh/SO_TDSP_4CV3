@@ -1,4 +1,5 @@
-::Su tarea será agregar la diferencia (B-A) y el producto cartesiano tanto para A como B. jeje saludos
+:: Equipo: Tamalitos de dulce sin pasas	Fecha: 04-09-24		Versión: 1.2
+:: Su tarea será agregar la diferencia (B-A) y el producto cartesiano tanto para A como B.
 
 @echo off
 setlocal EnableDelayedExpansion
@@ -7,18 +8,8 @@ setlocal EnableDelayedExpansion
 cls
 echo.
 echo Ingrese los conjuntos (separados por espacios):
-set /p set1="Conjunto 1: "
-set /p set2="Conjunto 2: "
-set /p choice="Conjunto Universo (S): "
-if /i "%choice%"=="s" (
-    set /p set3="Conjunto 3: "
-    set /a setCount=3
-) else (
-    set /a setCount=2
-)
-if %setCount% lss 3 (
-    set "set3="
-)
+set /p set1="Conjunto 1 (A): "
+set /p set2="Conjunto 2 (B): "
 
 echo.
 echo Operaciones disponibles:
@@ -34,7 +25,7 @@ if %operation%==1 goto union
 if %operation%==2 goto interseccion
 if %operation%==3 goto diferencia
 if %operation%==4 goto producto_cartesiano
-if %operation%==5 goto complemento
+if %operation%==5 goto complemento_menu
 
 goto end
 
@@ -50,11 +41,6 @@ for %%a in (%set1%) do (
 for %%b in (%set2%) do (
     echo !result! | find "%%b" >nul || set "result=!result! %%b"
 )
-if defined set3 (
-    for %%c in (%set3%) do (
-        echo !result! | find "%%c" >nul || set "result=!result! %%c"
-    )
-)
 echo Union: !result!
 goto end
 
@@ -62,20 +48,10 @@ goto end
 set "result="
 for %%a in (%set1%) do (
     echo %set2% | find "%%a" >nul && (
-        if defined set3 (
-            echo %set3% | find "%%a" >nul && (
-                if "!result!" == "" (
-                    set "result=%%a"
-                ) else (
-                    set "result=!result! %%a"
-                )
-            )
+        if "!result!" == "" (
+            set "result=%%a"
         ) else (
-            if "!result!" == "" (
-                set "result=%%a"
-            ) else (
-                set "result=!result! %%a"
-            )
+            set "result=!result! %%a"
         )
     )
 )
@@ -93,21 +69,33 @@ for %%a in (%set1%) do (
         )
     )
 )
-echo Diferencia: !result!
+echo Diferencia (A - B): !result!
 goto end
 
-
 :producto_cartesiano
-set "result="
-:: Desarrollen su codigo aqui
+:: -----------------------
+:: SU CODIGO DE LA SOLUCIÓN AQUÍ
+:: -----------------------
 echo Producto Cartesiano: !result!
 goto end
 
-:complemento
+:complemento_menu
 set /p universe="Ingrese el conjunto universo (separado por espacios): "
+echo.
+echo ¿Complemento de A o de B?
+echo 1. Complemento de A
+echo 2. Complemento de B
+echo.
+set /p comp_choice="Seleccione (1-2): "
+
+if %comp_choice%==1 goto complemento_a
+if %comp_choice%==2 goto complemento_b
+goto end
+
+:complemento_a
 set "result="
 for %%a in (%universe%) do (
-    echo %set1% %set2% | find "%%a" >nul || (
+    echo %set1% | find "%%a" >nul || (
         if "!result!" == "" (
             set "result=%%a"
         ) else (
@@ -115,7 +103,21 @@ for %%a in (%universe%) do (
         )
     )
 )
-echo Complemento: !result!
+echo Complemento de A respecto al universo: !result!
+goto end
+
+:complemento_b
+set "result="
+for %%b in (%universe%) do (
+    echo %set2% | find "%%b" >nul || (
+        if "!result!" == "" (
+            set "result=%%b"
+        ) else (
+            set "result=!result! %%b"
+        )
+    )
+)
+echo Complemento de B respecto al universo: !result!
 goto end
 
 :end
